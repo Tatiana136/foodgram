@@ -16,8 +16,11 @@ class TagFilter(filters.FilterSet):
         model = Recipes
         fields = ('tags',)
 
+
 class RecipesFilter(filters.FilterSet):
-    """Фильтр для управления рецептами с возможностью фильтрации по тегам и другим параметрам."""
+    """Фильтр для управления рецептами с возможностью фильтрации
+    по тегам и другим параметрам.
+    """
 
     tags = filters.ModelMultipleChoiceFilter(
         queryset=Tag.objects.all(),
@@ -25,9 +28,15 @@ class RecipesFilter(filters.FilterSet):
         to_field_name='slug',
         label='Теги'
     )
-    
-    is_favorited = filters.BooleanFilter(method='filter_favorites', label='Избранное')
-    is_in_shopping_cart = filters.BooleanFilter(method='filter_cart', label='В корзине')
+
+    is_favorited = filters.BooleanFilter(
+        method='filter_favorites',
+        label='Избранное'
+    )
+    is_in_shopping_cart = filters.BooleanFilter(
+        method='filter_cart',
+        label='В корзине'
+    )
 
     class Meta:
         model = Recipes

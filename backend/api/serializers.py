@@ -53,7 +53,7 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True}
         }
-    
+
     def validate_username(self, value):
         if not re.match(r'^[\w.@+-]+$', value):
             raise serializers.ValidationError(
@@ -75,7 +75,7 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         print("Создание пользователя с данными:", validated_data)
         # Пароль не должен храниться в обычном виде.
-        # Поэтому сначала извлекаем пароль из validated_data 
+        # Поэтому сначала извлекаем пароль из validated_data
         # и удаляем его из словаря, потом передаем данные без пароля.
         password = validated_data.pop('password')
         user = super().create(validated_data)
@@ -197,7 +197,7 @@ class CompactRecipesInfoSerializer(serializers.ModelSerializer):
             }
             for ia in ingredient_amounts
         ]
-    
+
     def get_tags(self, recipe_instance):
         return [tag.id for tag in recipe_instance.tags.all()]
 
@@ -226,7 +226,7 @@ class RecipesInfoSerializer(serializers.ModelSerializer):
             'text',
             'cooking_time',
         )
-    
+
     def get_ingredients(self, recipe_instance):
         ingredient_amounts = IngredientAmount.objects.filter(
             recipe=recipe_instance
@@ -237,8 +237,8 @@ class RecipesInfoSerializer(serializers.ModelSerializer):
                 'amount': ia.amount,
                 'measurement_unit': ia.ingredient.measurement_unit,
                 'name': ia.ingredient.name
-                }
-                for ia in ingredient_amounts
+            }
+            for ia in ingredient_amounts
         ]
 
     def get_tags(self, recipe_instance):
@@ -255,7 +255,7 @@ class RecipesInfoSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request is None:
             return False
-    
+
         user = request.user
         if user.is_anonymous:
             return False
@@ -363,7 +363,7 @@ class RecipesAddSerializer(serializers.ModelSerializer):
         if tags is not None:
             self._update_tags(instance, tags)
         return RecipesInfoSerializer(instance).data
-    
+
     def _update_ingredients(self, ingredients_data, recipe):
         recipe.ingredients.clear()
         self._add_ingredients(ingredients_data, recipe)

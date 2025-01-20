@@ -85,7 +85,7 @@ class Ingredient(models.Model):
         max_length=30,
         help_text='Введите единицу измерения',
         db_index=True)
- 
+
     class Meta:
         ordering = ['name']
         verbose_name = 'Ингредиент'
@@ -114,7 +114,7 @@ class Tag(models.Model):
             models.UniqueConstraint(
                 fields=['name', 'slug'],
                 name='unique_name_slug')]
-    
+
     def __str__(self):
         return self.name
 
@@ -150,7 +150,7 @@ class Recipes(models.Model):
         on_delete=models.CASCADE,
         related_name='recipes',
         help_text='Автор рецепта')
-    
+
     class Meta:
         ordering = ['-id']
         verbose_name = 'Рецепт'

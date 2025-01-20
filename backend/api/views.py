@@ -19,7 +19,8 @@ from api.serializers import (UserSerializer, RecipesInfoSerializer,
                              ShoppingListSerializer, FollowerSerializer,
                              PasswordSerializer, AvatarSerializer,
                              TagSerializer, IngredientSerializer,
-                             RecipesAddSerializer, IngredientRecipeSerializer)
+                             RecipesAddSerializer, IngredientRecipeSerializer,
+                             FavoriteSerializer)
 from api.permissions import AuthorOrReadOnly, IsAdminOrReadOnly
 from .filters import RecipesFilter
 from .pagination import CustomPagination
@@ -123,7 +124,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
+
     @action(
         methods=['GET', 'PATCH'],
         detail=False,
@@ -147,7 +148,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
+
     @action(
         methods=['PUT', 'DELETE'],
         detail=False,
@@ -179,7 +180,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
+
     # Ставим detail=False, чтобы метод не требовал id
     @action(
         detail=False,
@@ -222,7 +223,6 @@ class FavoritesView(APIView):
         if user.is_anonymous:
             return Response({"detail": "Unauthorized"}, status=401)
 
-        # Получаем избранные рецепты
         favorites = user.favorites.all()
         serializer = FavoriteSerializer(favorites, many=True)
         return Response(serializer.data)
@@ -241,14 +241,14 @@ class RecipesViewSet(viewsets.ModelViewSet):
         if self.request.method in SAFE_METHODS:
             return RecipesInfoSerializer
         return RecipesAddSerializer
-    
+
     def get_ingredients(self, recipe_instance):
         ingredient_amounts = IngredientAmount.objects.filter(
             recipe=recipe_instance
         ).select_related('ingredient')
         print(ingredient_amounts)
         return IngredientRecipeSerializer(ingredient_amounts, many=True).data
-    
+
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         page = self.paginate_queryset(queryset)
@@ -343,7 +343,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
-            ) 
+            )
         serializer.is_valid(raise_exception=True)
         # Создание рецепта
         recipe = serializer.save(author=request.user)
@@ -383,7 +383,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
             f"/api/recipes/redirect/{short_link}/"
         )
         return Response({'short-link': short_url}, status=status.HTTP_200_OK)
-    
+
     def generate_short_link(self, id):
         hash_object = hashlib.md5(str(id).encode())
         # Кодируем в base64
@@ -391,7 +391,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         # Убираем символы '=' и обрезаем до 4 символов
         short_link = short_link.rstrip('=')[:4]
         return short_link
-    
+
     @action(
         detail=False,
         methods=['GET'],
