@@ -1,0 +1,8 @@
+venv
+food
+.git
+.idea
+.vscode
+.env
+README.md
+db.sqlite3
