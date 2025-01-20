@@ -68,6 +68,7 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 CORS_URLS_REGEX = r'^/api/.*$'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+    'https://foodg.serveirc.com',
 ]
 
 # Database
@@ -143,3 +144,5 @@ REST_FRAMEWORK = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'recipes.User'
+
+CSRF_TRUSTED_ORIGINS = ['https://foodg.serveirc.com']
