@@ -18,7 +18,6 @@ DEBUG = True
 ALLOWED_HOSTS = ['foodg.serveirc.com', 'localhost', '127.0.0.1', '89.169.166.98']
 
 
-
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.admin',
