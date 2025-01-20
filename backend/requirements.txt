@@ -41,10 +41,10 @@ pluggy==0.13.1
 psycopg2==2.9.9
 psycopg2-binary==2.9.3 
 py==1.11.0
-pycodestyle==2.9.1
+pycodestyle
 pycparser==2.21
 pydocstyle==6.3.0
-pyflakes==2.5.0
+pyflakes
 PyJWT==2.1.0
 pyparsing==3.0.7
 pytest==7.4.4
