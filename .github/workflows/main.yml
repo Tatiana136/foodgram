@@ -57,4 +57,4 @@ build_and_push_to_docker_hub:
       with:
         context: ./backend/
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend5:latest
+        tags: tanya2222/foodgram_backend5:latest
