@@ -13,9 +13,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-x9p9$z0oystq-lfu1*8$n@)&*s_l5p8a+(o-ocv=q8+8h^&3=_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['foodg.serveirc.com', 'localhost', '127.0.0.1', '89.169.166.98']
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')]
 
 
 INSTALLED_APPS = [
@@ -144,5 +144,3 @@ REST_FRAMEWORK = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'recipes.User'
-
-CSRF_TRUSTED_ORIGINS = ['https://foodg.serveirc.com']
