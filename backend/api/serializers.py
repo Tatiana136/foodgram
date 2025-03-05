@@ -424,8 +424,8 @@ class FollowerSerializer(serializers.ModelSerializer):
 
 
 class ShoppingListSerializer(serializers.ModelSerializer):
-    recipe = RecipesFoFollowerSerializer(read_only=True)
+    recipe = serializers.PrimaryKeyRelatedField(queryset=Recipes.objects.all())
 
     class Meta:
         model = ShoppingList
-        fields = ('id', 'recipe')
+        fields = ['id', 'recipe']

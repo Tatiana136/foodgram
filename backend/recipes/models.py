@@ -159,6 +159,9 @@ class Recipes(models.Model):
             models.UniqueConstraint(
                 fields=['name', 'author'],
                 name='unique_name_author')]
+    
+    def __str__(self):
+        return self.name
 
 
 class IngredientAmount(models.Model):

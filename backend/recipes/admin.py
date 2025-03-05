@@ -40,7 +40,7 @@ class TagAdmin(admin.ModelAdmin):
 class IngredientAmountAdmin(admin.ModelAdmin):
     """Админка для ингредиентов рецептов."""
 
-    list_display = ('id', 'ingredient', 'recipe', 'amount',)
+    list_display = ('ingredient', 'recipe', 'amount',)
     search_fields = ('name',)
     list_filter = ('ingredient', 'recipe',)
     empty_value_display = '-пусто-'

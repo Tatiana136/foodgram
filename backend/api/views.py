@@ -20,11 +20,14 @@ from api.serializers import (UserSerializer, RecipesInfoSerializer,
                              PasswordSerializer, AvatarSerializer,
                              TagSerializer, IngredientSerializer,
                              RecipesAddSerializer, IngredientRecipeSerializer,
-                             FavoriteSerializer)
+                             FavoriteSerializer, RecipesFoFollowerSerializer)
 from api.permissions import AuthorOrReadOnly, IsAdminOrReadOnly
 from .filters import RecipesFilter
 from .pagination import CustomPagination
+import logging
 
+
+logger = logging.getLogger('recipes')
 
 short_links_storage = {}
 
@@ -46,11 +49,22 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         try:
             serializer.save()
-        except Exception as e:
+        except IntegrityError as e:
+            logger.error(f"Ошибка при создании пользователя: {e}")
             return Response(
-                {'ERROR': str(e)},
+                {'ERROR': 'Ошибка целостности данных. Проверьте уникальность.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        except Exception as e:
+            logger.error(f"Непредвиденная ошибка при создании пользователя: {e}")
+            return Response(
+                {'ERROR': 'Произошла ошибка. Попробуйте еще раз.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+            # return Response(
+            #     {'ERROR': str(e)},
+            #     status=status.HTTP_400_BAD_REQUEST
+            # )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['GET'], url_path='subscriptions')
@@ -332,6 +346,12 @@ class RecipesViewSet(viewsets.ModelViewSet):
                     {'message': 'Рецепт не найден в избранном.'},
                     status=status.HTTP_404_NOT_FOUND
                 )
+            except Exception as e:
+                logger.error(f"Ошибка при обработке избранного: {e}")
+                return Response(
+                    {'ERROR': 'Произошла ошибка. Попробуйте еще раз.'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
 
     def create(self, request, *args, **kwargs):
         serializer = RecipesAddSerializer(
@@ -447,6 +467,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         shopping_list_item.save()
         # Сериализация созданного объекта для ответа
         serializer = ShoppingListSerializer(shopping_list_item)
+        # recipe_serializer = RecipesFoFollowerSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete_shopping_cart(self, user, id):
@@ -461,7 +482,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=True,
-        url_path='shopping_cart',
         permission_classes=[IsAuthenticated]
     )
     def get_shopping_cart(self, request):
@@ -474,6 +494,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
             'recipe_id',
             flat=True
         )
+        print('shopping_cart:', shopping_cart_recipes)
         ingredients = (
             IngredientAmount.objects
             .filter(recipe_id__in=shopping_cart_recipes)
@@ -481,11 +502,12 @@ class RecipesViewSet(viewsets.ModelViewSet):
             .values('ingredient__name', 'ingredient__measurement_unit')
             .annotate(total_amount=Sum('amount'))
         )
+        print('ingredients:', ingredients)
 
         if not ingredients.exists():
             return Response(
-                {'ERROR': 'Ингредиент не найден!'},
-                status=status.HTTP_400_BAD_REQUEST
+                {'MESSAGE': 'Ингредиенты не найдены, но запрос выполнен успешно.'},
+                status=status.HTTP_200_OK
             )
         ingredient_summary = defaultdict(int)
 

@@ -15,9 +15,9 @@ const Technologies = () => {
       <h1 className={styles.title}>Технологии</h1>
       <div className={styles.content}>
         <div>
-          <h2 className={styles.subtitle}>Технологии, которые применены в этом проекте:</h2>
+          <h2 className={styles.subtitle}>Технологии, которые применены в этом проекте.</h2>
           <div className={styles.text}>
-            <ul className={styles.textItem}>
+            {/* <ul className={styles.textItem}>
               <li className={styles.textItem}>
                 Python
               </li>
@@ -30,7 +30,7 @@ const Technologies = () => {
               <li className={styles.textItem}>
                 Djoser
               </li>
-            </ul>
+            </ul> */}
           </div>
         </div>
       </div>
